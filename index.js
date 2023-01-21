@@ -1,19 +1,42 @@
 const fs = require("fs");
 const inquirer = require("inquirer");
 
+function descriptionTitle() {
+  return `# **Description**`;
+}
 function descriptionTemplate({ desc, path }) {
-    return(
-      `# **Description**
+  return `
       ${desc}
-      ![Screenshot](./${path})
-      
-      `
-    )
-  }
 
+      ![Screenshot](./${path})
+
+
+      `;
+}
+
+function technologyTitle() {
+  `| Technology Used | Resource URL | 
+    | ------------- |:-------------| `;
+}
+function technologyTemplate() {
+  const techIndex = {
+    GIT: "https://git-scm.com/",
+    HTML: "https://developer.mozilla.org/en-US/docs/Web/HTML",
+    CSS: "https://developer.mozilla.org/en-US/docs/Web/CSS",
+    JavaScript: "https://developer.mozilla.org/en-US/docs/Learn/JavaScript",
+    jQuery: "https://api.jquery.com/",
+    "Web APIs": "https://developer.mozilla.org/en-US/docs/Web/API",
+  };
+
+  if (techIndex[tech]) {
+    return `| ${tech} | [${techIndex[tech]}](${techIndex[tech]}) |`;
+  } else {
+    return `| ${tech} | [${tech}](${tech}) |`;
+  }
+}
 
 function appendReadme(data, templateType) {
-  console.log("18", data)
+  console.log("18", data);
   var printer = templateType(data);
   fs.appendFile("gREADME.md", `${printer}`, (err) =>
     err ? console.error(err) : console.log("Success!")
@@ -235,4 +258,4 @@ async function ammendInput(ammendType) {
   return processedArr;
 }
 
-description()
+description();

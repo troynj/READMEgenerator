@@ -1,6 +1,25 @@
 const fs = require("fs");
 const inquirer = require("inquirer");
 
+function descriptionTemplate({ desc, path }) {
+    return(
+      `# **Description**
+      ${desc}
+      ![Screenshot](./${path})
+      
+      `
+    )
+  }
+
+
+function appendReadme(data, templateType) {
+  console.log("18", data)
+  var printer = templateType(data);
+  fs.appendFile("gREADME.md", `${printer}`, (err) =>
+    err ? console.error(err) : console.log("Success!")
+  );
+}
+
 const tableOfContents = `# **Table of Contents**
   1. [Description](#description)
   2. [Technology](#technology)
@@ -32,7 +51,7 @@ async function description() {
         message: "Description:",
       },
       {
-        name: "img",
+        name: "path",
         message:
           "Complement the Description with an image (use relative a file path): ./",
       },
@@ -42,7 +61,7 @@ async function description() {
       userInput.push(response);
       // console.log(response.desc);
     });
-  console.log(userInput);
+  appendReadme(...userInput, descriptionTemplate);
 }
 async function technology() {
   const techArr = new Array();
@@ -215,3 +234,5 @@ async function ammendInput(ammendType) {
     });
   return processedArr;
 }
+
+description()

@@ -16,9 +16,9 @@ function descriptionTemplate({ desc, path }) {
 
 function technologyTitle() {
   `| Technology Used | Resource URL | 
-    | ------------- |:-------------| `;
+    | ------------- |:-------------|\n`;
 }
-function technologyTemplate() {
+function technologyTemplate(tech) {
   const techIndex = {
     GIT: "https://git-scm.com/",
     HTML: "https://developer.mozilla.org/en-US/docs/Web/HTML",
@@ -29,14 +29,14 @@ function technologyTemplate() {
   };
 
   if (techIndex[tech]) {
-    return `| ${tech} | [${techIndex[tech]}](${techIndex[tech]}) |`;
+   return `| ${tech} | [${techIndex[tech]}](${techIndex[tech]}) |\n`;
   } else {
-    return `| ${tech} | [${tech}](${tech}) |`;
+   return `| ${tech} | [${tech}](${tech}) |\n`;
   }
 }
 
 function appendReadme(data, templateType) {
-  console.log("18", data);
+  console.log("40", data);
   var printer = templateType(data);
   fs.appendFile("gREADME.md", `${printer}`, (err) =>
     err ? console.error(err) : console.log("Success!")
@@ -95,11 +95,15 @@ async function technology() {
         name: "tech",
         message: "Technologies Used:",
         choices: [
-          "git",
+          "GIT",
           "HTML",
           "CSS",
           "JavaScript",
+          "jQuery",
           "Node.js",
+          "Web APIs",
+          "AJAX",
+          "AXIOS",          
           new inquirer.Separator(),
           "Other",
         ],
@@ -116,7 +120,8 @@ async function technology() {
         techArr.push(...(await ammendInput("Technology")));
       }
     });
-  console.log(techArr);
+  
+  techArr.forEach(el => appendReadme(el, technologyTemplate))
 }
 async function features() {
   const userInput = new Array();
@@ -258,4 +263,4 @@ async function ammendInput(ammendType) {
   return processedArr;
 }
 
-description();
+technology();

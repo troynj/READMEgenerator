@@ -128,12 +128,11 @@ async function description() {
     .then(async (response) => {
       response.desc = response.desc.trim();
       response.path = response.path.trim();
-      await appendTemplate(response, descriptionTemplate);
+      appendTemplate(response, descriptionTemplate);
       await ammendRepeat("Description", description);
     });
 }
 async function technology() {
-  const techArr = new Array();
   await inquirer
     .prompt([
       {
@@ -155,14 +154,15 @@ async function technology() {
         ],
       },
     ])
-    .then(async (response) => {
-      techArr.push(...response.tech.filter((el) => el !== "Other"));
-      const moreTech = response.tech.filter((el) => el === "Other");
-      moreTech[0] && techArr.push(...(await ammendInput("Technology")));
-      
-      console.log("ta b4 loop",techArr)
-      // console.log("inside: ", techArr)
-      techArr.forEach(async (el) => await appendTemplate(el, technologyTemplate));
+    .then(async response => {
+      //create array for filter
+      const techArr = new Array();
+      //filter out everything except for "other"
+      techArr.push(...response.tech.filter(el => el !== "Other"));
+      //if other was selected, call function, push array *values* to techArr
+      response.tech.includes("Other") && techArr.push(...(await ammendInput("Technology")));
+      //append page with user choices
+      techArr.forEach(async el => await appendTemplate(el, technologyTemplate));     
     });
 }
 async function features() {
@@ -177,7 +177,7 @@ async function features() {
         message: "Code Highlight Description:",
       },
     ])
-    .then(async (response) => {
+    .then(async response => {
       appendTemplate(response, featuresTemplate);
       await ammendRepeat("Highlight", features);
     });
@@ -195,17 +195,16 @@ async function installation() {
         message: "Include an image of this step (use relative file path) ./",
       },
     ])
-    .then(async (response) => {
-      response.desc = response.step.trim();
-      response.path = response.path.trim();
-      appendTemplate(response, descriptionTemplate);
-      ammendRepeat("Description", description);
+    .then(async response => {
+      response.input = response.step.trim();
+      response.step = response.path.trim();
+      appendTemplate(response, installationTemplate);
+      await ammendRepeat("Step", installation);
     });
 
-  console.log(userInput);
 }
 async function usage() {
-  inquirer
+  await inquirer
     .prompt([
       {
         type: "input",
@@ -217,17 +216,16 @@ async function usage() {
         message: "Include an image of this step (use relative file path) ./",
       },
     ])
-    .then(async (response) => {
+    .then(async response => {
       response.step = response.step.trim();
       response.path = response.path.trim();
       appendTemplate(response, usageTemplate);
-      ammendRepeat("Step", usage);
+      await ammendRepeat("Step", usage);
     });
 
-  console.log(userInput);
 }
 async function about() {
-  inquirer
+  await inquirer
     .prompt([
       {
         name: "creator",
@@ -243,27 +241,26 @@ async function about() {
         message: "Github URL:",
       },
     ])
-    .then(async (response) => {
+    .then(async response => {
       appendTemplate(response, aboutTemplate);
-      ammendRepeat("Author", about);
+      await ammendRepeat("Author", about);
     });
 }
 async function credits() {
-  inquirer
+  await inquirer
     .prompt([
       {
         name: "credits",
         message: "Credits:",
       },
     ])
-    .then((response) => {
+    .then(async response => {
       appendTemplate(response, creditsTemplate);
-      ammendRepeat("Credit", credits);
+      await ammendRepeat("Credit", credits);
     });
 }
 async function license() {
-  const licenseArr = new Array();
-  inquirer
+  await inquirer
     .prompt([
       {
         type: "checkbox",
@@ -280,18 +277,15 @@ async function license() {
         ],
       },
     ])
-    .then(async (response) => {
-      licenseArr.unshift(...response.license.filter((el) => el !== "Other"));
-
-      // console.log(response)
-      const moreTech = response.license.filter((el) => el === "Other");
-      // console.log("moreTech: ", moreTech)
-      if (moreTech[0]) {
-        //  console.log(moreTech);
-        licenseArr.unshift(...(await ammendInput("License")));
-      }
-      // console.log("inside: ", techArr)
-      licenseArr.forEach((el) => appendTemplate(el, licenseTemplate));
+    .then(async response => {
+       //create array for filter method
+       const licenseArr = new Array();
+       //filter out everything except for "other"
+       licenseArr.push(...response.license.filter(el => el !== "Other"));
+       //if other was selected, call function, push all array *values* to techArr
+       response.license.includes("Other") && licenseArr.push(...(await ammendInput("License")));
+       //append page with user choices
+       licenseArr.forEach(async el => await appendTemplate(el, licenseTemplate));
     });
 }
 async function ammendRepeat(ammendType, fn) {

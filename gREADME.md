@@ -8,18 +8,42 @@
   7. [Credits](#credits)
   8. [License](#license)
 
-[Deployed site](test.com)
+[Deployed site](b)
 
 # **Description**
 
-desc1
-![Screenshot](./p1)
+n
+![Screenshot](./)
 
 # **Technology**
 
 | GIT | [https://git-scm.com/](https://git-scm.com/) |
-| HTML | [https://developer.mozilla.org/en-US/docs/Web/HTML](https://developer.mozilla.org/en-US/docs/Web/HTML) |
-| CSS | [https://developer.mozilla.org/en-US/docs/Web/CSS](https://developer.mozilla.org/en-US/docs/Web/CSS) |
-| JavaScript | [https://developer.mozilla.org/en-US/docs/Learn/JavaScript](https://developer.mozilla.org/en-US/docs/Learn/JavaScript) |
 # **Features**
 
+n
+```
+n
+```
+# **Installation**
+
+n
+![Screenshot](./n)
+
+# **Usage**
+
+n
+![Screenshot](./n)
+
+# **About**
+
+troy
+
+![Email](j})
+[Linked In](j})
+[GitHub](ul})
+
+# **Credits**
+
+credits: gh# **License**
+
+adding a undefined license

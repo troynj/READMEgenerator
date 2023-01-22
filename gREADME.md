@@ -1,24 +1,25 @@
+# **Table of Contents**
+  1. [Description](#description)
+  2. [Technology](#technology)
+  3. [Features](#features)
+  4. [Installation](#installation)
+  5. [Usage](#usage)
+  6. [About](#about)
+  7. [Credits](#credits)
+  8. [License](#license)
 
-      desc3
+[Deployed site](test.com)
 
-      ![Screenshot](./path)
+# **Description**
 
+desc1
+![Screenshot](./p1)
 
-      
-      desc2
+# **Technology**
 
-      ![Screenshot](./path)
-
-
-      
-      desc1
-
-      ![Screenshot](./path)
-
-
-    | GIT | [https://git-scm.com/](https://git-scm.com/) |
+| GIT | [https://git-scm.com/](https://git-scm.com/) |
 | HTML | [https://developer.mozilla.org/en-US/docs/Web/HTML](https://developer.mozilla.org/en-US/docs/Web/HTML) |
-| three | [three](three) |
-| one | [one](one) |
-| two | [two](two) |
 | CSS | [https://developer.mozilla.org/en-US/docs/Web/CSS](https://developer.mozilla.org/en-US/docs/Web/CSS) |
+| JavaScript | [https://developer.mozilla.org/en-US/docs/Learn/JavaScript](https://developer.mozilla.org/en-US/docs/Learn/JavaScript) |
+# **Features**
+

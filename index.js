@@ -1,22 +1,37 @@
 const fs = require("fs");
 const inquirer = require("inquirer");
 
+function startWriting(data) {
+  fs.writeFile("gREADME.md", `${data}`, (err) => err && console.error(err));
+}
+async function appendTemplate(data, templateType) {
+  // console.log("9", data);
+  var printer = await templateType(data);
+  // console.log("printer: ", printer)
+  fs.appendFileSync("gREADME.md", `${printer}`, (err) => err && console.error(err));
+}
+
+async function appendTitle(titleType) {
+  fs.appendFile("gREADME.md", `${titleType()}`, (err) =>
+  err && console.error(err)
+  );
+}
+
+async function deployedTemplate(link) {
+  return `[Deployed site](${link})\n\n`;
+}
+
 function descriptionTitle() {
-  return `# **Description**`;
+  return `# **Description**\n\n`;
 }
 function descriptionTemplate({ desc, path }) {
-  return `
-      ${desc}
-
-      ![Screenshot](./${path})
-
-
-      `;
+  return `${desc}\n![Screenshot](./${path})\n\n`;
 }
 
 function technologyTitle() {
-  `| Technology Used | Resource URL | 
-    | ------------- |:-------------|\n`;
+  return `# **Technology**\n\n`;
+  // | Technology Used | Resource URL |
+  //   | ------------- |:-------------|\n;
 }
 function technologyTemplate(tech) {
   const techIndex = {
@@ -27,22 +42,54 @@ function technologyTemplate(tech) {
     jQuery: "https://api.jquery.com/",
     "Web APIs": "https://developer.mozilla.org/en-US/docs/Web/API",
   };
+  console.log("in", tech, techIndex[tech])
 
   if (techIndex[tech]) {
-   return `| ${tech} | [${techIndex[tech]}](${techIndex[tech]}) |\n`;
+    return `| ${tech} | [${techIndex[tech]}](${techIndex[tech]}) |\n`;
   } else {
-   return `| ${tech} | [${tech}](${tech}) |\n`;
+    return `| ${tech} | [${tech}](${tech}) |\n`;
   }
 }
 
-function appendReadme(data, templateType) {
-  console.log("40", data);
-  var printer = templateType(data);
-  fs.appendFile("gREADME.md", `${printer}`, (err) =>
-    err ? console.error(err) : console.log("Success!")
-  );
+function featuresTitle() {
+  return `# **Features**\n\n`;
 }
 
+async function featuresTemplate({ code, desc }) {
+  return `${desc}\n\`\`\`\n${code}\n\`\`\`\n`;
+}
+
+function installationTitle() {
+  return `# **Installation**\n\n`;
+}
+
+async function installationTemplate({ step, path }) {
+  return `${step}\n![Screenshot](./${path})\n\n`;
+}
+function usageTitle() {
+  return `# **Usage**\n\n`;
+}
+async function usageTemplate({ step, path }) {
+  return `${step}\n![Screenshot](./${path})\n\n`;
+}
+function aboutTitle() {
+  return `# **About**\n\n`;
+}
+async function aboutTemplate({ creator, eMail, linkedIn, gitHub }) {
+  return `${creator}\n\n![Email](${eMail}})\n[Linked In](${linkedIn}})\n[GitHub](${gitHub}})\n\n`;
+}
+function creditsTitle() {
+  return `# **Credits**\n\n`;
+}
+async function creditsTemplate({ credits }) {
+  return `credits: ${credits}`;
+}
+function licenseTitle() {
+  return `# **License**\n\n`;
+}
+async function licenseTemplate({ license }) {
+  return `adding a ${license} license`;
+}
 const tableOfContents = `# **Table of Contents**
   1. [Description](#description)
   2. [Technology](#technology)
@@ -51,40 +98,39 @@ const tableOfContents = `# **Table of Contents**
   5. [Usage](#usage)
   6. [About](#about)
   7. [Credits](#credits)
-  8. [License](#license)`;
+  8. [License](#license)\n\n`;
 
-function deployed() {
-  inquirer
+async function deployed() {
+  await inquirer
     .prompt([
       {
         name: "link",
         message: "Deployed Link:",
       },
     ])
-    .then((response) => {
-      return response.link;
+    .then(async (response) => {
+      appendTemplate(response.link, deployedTemplate);
     });
 }
 async function description() {
-  const userInput = new Array();
   await inquirer
     .prompt([
       {
         name: "desc",
-        message: "Description:",
+        message: "Description of Application:",
       },
       {
         name: "path",
         message:
-          "Complement the Description with an image (use relative a file path): ./",
+          "Complement the Description with an Image (use relative a file path): ./",
       },
     ])
     .then(async (response) => {
+      response.desc = response.desc.trim();
+      response.path = response.path.trim();
+      await appendTemplate(response, descriptionTemplate);
       await ammendRepeat("Description", description);
-      userInput.push(response);
-      // console.log(response.desc);
     });
-  appendReadme(...userInput, descriptionTemplate);
 }
 async function technology() {
   const techArr = new Array();
@@ -103,7 +149,7 @@ async function technology() {
           "Node.js",
           "Web APIs",
           "AJAX",
-          "AXIOS",          
+          "AXIOS",
           new inquirer.Separator(),
           "Other",
         ],
@@ -111,21 +157,15 @@ async function technology() {
     ])
     .then(async (response) => {
       techArr.push(...response.tech.filter((el) => el !== "Other"));
-
-      // console.log(response)
       const moreTech = response.tech.filter((el) => el === "Other");
-      // console.log("moreTech: ", moreTech)
-      if (moreTech[0]) {
-        //  console.log(moreTech);
-        techArr.push(...(await ammendInput("Technology")));
-      }
+      moreTech[0] && techArr.push(...(await ammendInput("Technology")));
+      
+      console.log("ta b4 loop",techArr)
+      // console.log("inside: ", techArr)
+      techArr.forEach(async (el) => await appendTemplate(el, technologyTemplate));
     });
-  
-  techArr.forEach(el => appendReadme(el, technologyTemplate))
 }
 async function features() {
-  const userInput = new Array();
-
   await inquirer
     .prompt([
       {
@@ -138,17 +178,11 @@ async function features() {
       },
     ])
     .then(async (response) => {
-      userInput.push(response);
-      // console.log("user input before: ", userInput);
-
+      appendTemplate(response, featuresTemplate);
       await ammendRepeat("Highlight", features);
-
-      // console.log("user input after: ", userInput);
     });
-  console.log(userInput);
 }
 async function installation() {
-  const userInput = new Array();
   await inquirer
     .prompt([
       {
@@ -156,34 +190,43 @@ async function installation() {
         name: `step`,
         message: `Installation Instructions:`,
       },
+      {
+        name: "path",
+        message: "Include an image of this step (use relative file path) ./",
+      },
     ])
     .then(async (response) => {
-      // console.log(stepNum);
-      await ammendRepeat("Step", installation);
-      userInput.push(response.trim());
+      response.desc = response.step.trim();
+      response.path = response.path.trim();
+      appendTemplate(response, descriptionTemplate);
+      ammendRepeat("Description", description);
     });
 
   console.log(userInput);
 }
 async function usage() {
-  const userInput = new Array();
-  await inquirer
+  inquirer
     .prompt([
       {
         type: "input",
         name: `step`,
         message: `Usage Instructions:`,
       },
+      {
+        name: "path",
+        message: "Include an image of this step (use relative file path) ./",
+      },
     ])
     .then(async (response) => {
-      // console.log(stepNum);
-      await ammendRepeat("Step", usage);
-      userInput.push(response.trim());
+      response.step = response.step.trim();
+      response.path = response.path.trim();
+      appendTemplate(response, usageTemplate);
+      ammendRepeat("Step", usage);
     });
 
   console.log(userInput);
 }
-function about() {
+async function about() {
   inquirer
     .prompt([
       {
@@ -201,10 +244,11 @@ function about() {
       },
     ])
     .then(async (response) => {
-      console.log(response);
+      appendTemplate(response, aboutTemplate);
+      ammendRepeat("Author", about);
     });
 }
-function credits() {
+async function credits() {
   inquirer
     .prompt([
       {
@@ -213,20 +257,41 @@ function credits() {
       },
     ])
     .then((response) => {
-      console.log(response.desc);
+      appendTemplate(response, creditsTemplate);
+      ammendRepeat("Credit", credits);
     });
 }
-function license() {
+async function license() {
+  const licenseArr = new Array();
   inquirer
     .prompt([
       {
+        type: "checkbox",
         name: "license",
         message: "Liscense:",
-        choices: ["MIT", "ISC", "GPL", "Apache License 2.0", "BSD"],
+        choices: [
+          "MIT",
+          "ISC",
+          "GPL",
+          "Apache License 2.0",
+          "BSD",
+          new inquirer.Separator(),
+          "Other",
+        ],
       },
     ])
-    .then((response) => {
-      console.log(response);
+    .then(async (response) => {
+      licenseArr.unshift(...response.license.filter((el) => el !== "Other"));
+
+      // console.log(response)
+      const moreTech = response.license.filter((el) => el === "Other");
+      // console.log("moreTech: ", moreTech)
+      if (moreTech[0]) {
+        //  console.log(moreTech);
+        licenseArr.unshift(...(await ammendInput("License")));
+      }
+      // console.log("inside: ", techArr)
+      licenseArr.forEach((el) => appendTemplate(el, licenseTemplate));
     });
 }
 async function ammendRepeat(ammendType, fn) {
@@ -263,4 +328,25 @@ async function ammendInput(ammendType) {
   return processedArr;
 }
 
-technology();
+async function init() {
+  startWriting(tableOfContents);
+  await deployed();
+  await appendTitle(descriptionTitle);
+  await description();
+  await appendTitle(technologyTitle);
+  await technology();
+  await appendTitle(featuresTitle);
+  await features();
+  await appendTitle(installationTitle);
+  await installation();
+  await appendTitle(usageTitle);
+  await usage();
+  await appendTitle(aboutTitle);
+  await about();
+  await appendTitle(creditsTitle);
+  await credits();
+  await appendTitle(licenseTitle);
+  await license();
+}
+
+init();
